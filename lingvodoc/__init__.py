@@ -127,7 +127,7 @@ def get_git_version(repository_dir):
                 describe_result))
 
         version_str = (
-                
+
             '{}-{}'.format(
                 describe_result,
                 head_datetime.strftime('%Y.%m.%d-%H:%M')))
@@ -214,7 +214,7 @@ def get_uniparser_version():
 
             subprocess.check_output([
                 'pip3',
-                'show', 
+                'show',
                 'uniparser-erzya',
                 'uniparser-komi-zyrian',
                 'uniparser-meadow-mari',
@@ -1069,7 +1069,7 @@ def main(global_config, **settings):
     # TODO: DANGER
 
     storage_dict = (
-            
+
         dict(parser.items(
             'backend:storage' if parser.has_section('backend:storage') else
                 'storage')))
@@ -1096,24 +1096,24 @@ def main(global_config, **settings):
 
     # TODO: Find a more neat way
     try:
-        cache_kwargs = dict()
-        for k, v in parser.items('cache:dogpile'):
-            cache_kwargs[k] = v
+        # cache_kwargs = dict()
+        # for k, v in parser.items('cache:dogpile'):
+        #     cache_kwargs[k] = v
         cache_args = dict()
-        for k, v in parser.items('cache:dogpile:args'):
+        for k, v in parser.items('cache:redis:args'):
             cache_args[k] = v
-        cache_kwargs['arguments'] = cache_args
-        if 'expiration_time' in cache_kwargs:
-            cache_kwargs['expiration_time'] = int(cache_kwargs['expiration_time'])
-        if 'redis_expiration_time' in cache_kwargs:
-            cache_kwargs['redis_expiration_time'] = int(cache_kwargs['redis_expiration_time'])
+        # cache_kwargs['arguments'] = cache_args
+        # if 'expiration_time' in cache_kwargs:
+        #     cache_kwargs['expiration_time'] = int(cache_kwargs['expiration_time'])
+        if 'redis_expiration_time' in cache_args:
+            cache_args['redis_expiration_time'] = int(cache_args['redis_expiration_time'])
     except NoSectionError:
-        log.warn("No 'cache:dogpile' or/and 'cache:dogpile:args' sections in config; disabling caching")
+        log.warn("No or/and 'cache:redis:args' sections in config; disabling caching")
         initialize_cache(None)
         settings['cache_kwargs'] = None
     else:
-        initialize_cache(cache_kwargs)
-        settings['cache_kwargs'] = cache_kwargs
+        initialize_cache(cache_args)
+        settings['cache_kwargs'] = cache_args
 
     # Getting SMTP account settings.
 
